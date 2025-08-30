@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { SimulationState, Transaction, PriceDataPoint, SimulationResults } from '@/types/simulation';
+import { SimulationState, Transaction, PriceDataPoint, SimulationResults, TradingMode } from '@/types/simulation';
 
 function getRandomNumber(min: number, max: number): number {
   min = Math.ceil(min);
@@ -21,6 +21,9 @@ export function useSimulation() {
     maxTransactions: 30000,
     minTrade: 10,
     maxTrade: 100,
+    tradingMode: 'BUY_ONLY',
+    buyPercentage: 80,
+    sellPercentage: 20,
     isRunning: false,
     isPaused: false,
     progress: 0,
@@ -102,38 +105,88 @@ export function useSimulation() {
         return prev;
       }
 
-      // For now, only implementing buying as in the original code
-      const result = buying(prev.transactionCount, prev);
-      
-      const newState = {
-        ...prev,
-        USDTPool: result.USDTPool,
-        TACOSPool: result.TACOSPool,
-        price: result.price,
-        totalBuy: result.totalBuy,
-        transactionCount: prev.transactionCount + 1,
-        progress: ((prev.transactionCount + 1) / prev.maxTransactions) * 100,
+      let result: {
+        USDTPool: number;
+        TACOSPool: number;
+        price: number;
+        totalBuy?: number;
+        totalSell?: number;
+        transaction: Transaction;
       };
+      let shouldBuy = false;
 
-      // Add to price history
-      setPriceHistory(prevHistory => [
-        ...prevHistory,
-        {
-          transaction: newState.transactionCount,
-          price: newState.price,
-          timestamp: Date.now(),
-        }
-      ]);
+      // Determine if this transaction should be buy or sell based on trading mode
+      if (prev.tradingMode === 'BUY_ONLY') {
+        shouldBuy = true;
+      } else if (prev.tradingMode === 'SELL_ONLY') {
+        shouldBuy = false;
+      } else { // MIXED mode
+        // Use percentage to determine buy vs sell
+        const randomPercent = Math.random() * 100;
+        shouldBuy = randomPercent < prev.buyPercentage;
+      }
 
-      // Add to transactions (keep last 50)
-      setTransactions(prevTransactions => {
-        const newTransactions = [result.transaction, ...prevTransactions].slice(0, 50);
-        return newTransactions;
-      });
+      if (shouldBuy) {
+        result = buying(prev.transactionCount, prev);
+        const newState = {
+          ...prev,
+          USDTPool: result.USDTPool,
+          TACOSPool: result.TACOSPool,
+          price: result.price,
+          totalBuy: result.totalBuy || prev.totalBuy,
+          transactionCount: prev.transactionCount + 1,
+          progress: ((prev.transactionCount + 1) / prev.maxTransactions) * 100,
+        };
 
-      return newState;
+        // Add to price history
+        setPriceHistory(prevHistory => [
+          ...prevHistory,
+          {
+            transaction: newState.transactionCount,
+            price: newState.price,
+            timestamp: Date.now(),
+          }
+        ]);
+
+        // Add to transactions (keep last 50)
+        setTransactions(prevTransactions => {
+          const newTransactions = [result.transaction, ...prevTransactions].slice(0, 50);
+          return newTransactions;
+        });
+
+        return newState;
+      } else {
+        result = selling(prev.transactionCount, prev);
+        const newState = {
+          ...prev,
+          USDTPool: result.USDTPool,
+          TACOSPool: result.TACOSPool,
+          price: result.price,
+          totalSell: result.totalSell || prev.totalSell,
+          transactionCount: prev.transactionCount + 1,
+          progress: ((prev.transactionCount + 1) / prev.maxTransactions) * 100,
+        };
+
+        // Add to price history
+        setPriceHistory(prevHistory => [
+          ...prevHistory,
+          {
+            transaction: newState.transactionCount,
+            price: newState.price,
+            timestamp: Date.now(),
+          }
+        ]);
+
+        // Add to transactions (keep last 50)
+        setTransactions(prevTransactions => {
+          const newTransactions = [result.transaction, ...prevTransactions].slice(0, 50);
+          return newTransactions;
+        });
+
+        return newState;
+      }
     });
-  }, [buying]);
+  }, [buying, selling]);
 
   const startSimulation = useCallback(() => {
     setState(prev => ({ ...prev, isRunning: true, isPaused: false }));

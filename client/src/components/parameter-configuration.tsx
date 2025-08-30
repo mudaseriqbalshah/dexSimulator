@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { SimulationState } from '@/types/simulation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SimulationState, TradingMode } from '@/types/simulation';
 
 interface ParameterConfigurationProps {
   state: SimulationState;
@@ -26,12 +27,27 @@ export function ParameterConfiguration({
     }
   };
 
+  const handleTradingModeChange = (value: TradingMode) => {
+    onUpdateParameters({ tradingMode: value });
+  };
+
   return (
     <Card className="bg-card border-border">
       <CardHeader>
         <CardTitle className="text-foreground">Simulation Parameters</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Initial Price Display */}
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-muted-foreground">Initial Price</Label>
+            <span className="text-lg font-mono font-bold text-primary" data-testid="text-initial-price-display">
+              ${state.initialPrice.toFixed(6)}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">TACOS/USDT starting price</p>
+        </div>
+
         <div>
           <Label className="text-muted-foreground">Initial USD Pool</Label>
           <Input
@@ -92,6 +108,55 @@ export function ParameterConfiguration({
             />
           </div>
         </div>
+        
+        {/* Trading Mode Selection */}
+        <div>
+          <Label className="text-muted-foreground">Trading Mode</Label>
+          <Select value={state.tradingMode} onValueChange={handleTradingModeChange} disabled={state.isRunning}>
+            <SelectTrigger className="bg-input border-border text-foreground" data-testid="select-trading-mode">
+              <SelectValue placeholder="Select trading mode" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="BUY_ONLY">Only Buy</SelectItem>
+              <SelectItem value="SELL_ONLY">Only Sell</SelectItem>
+              <SelectItem value="MIXED">Mixed Buy/Sell</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Percentage Controls for Mixed Mode */}
+        {state.tradingMode === 'MIXED' && (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-muted-foreground">Buy Percentage</Label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                value={state.buyPercentage}
+                onChange={(e) => handleInputChange('buyPercentage', e.target.value)}
+                className="bg-input border-border text-foreground"
+                data-testid="input-buy-percentage"
+                disabled={state.isRunning}
+              />
+              <p className="text-xs text-muted-foreground mt-1">% of transactions that are buys</p>
+            </div>
+            <div>
+              <Label className="text-muted-foreground">Sell Percentage</Label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                value={state.sellPercentage}
+                onChange={(e) => handleInputChange('sellPercentage', e.target.value)}
+                className="bg-input border-border text-foreground"
+                data-testid="input-sell-percentage"
+                disabled={state.isRunning}
+              />
+              <p className="text-xs text-muted-foreground mt-1">% of transactions that are sells</p>
+            </div>
+          </div>
+        )}
         
         <div className="pt-4 space-y-3">
           <Button

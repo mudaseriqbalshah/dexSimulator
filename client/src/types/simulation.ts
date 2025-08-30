@@ -1,3 +1,5 @@
+export type TradingMode = 'BUY_ONLY' | 'SELL_ONLY' | 'MIXED';
+
 export interface SimulationState {
   initialUSD: number;
   initialTACOS: number;
@@ -11,6 +13,9 @@ export interface SimulationState {
   maxTransactions: number;
   minTrade: number;
   maxTrade: number;
+  tradingMode: TradingMode;
+  buyPercentage: number;
+  sellPercentage: number;
   isRunning: boolean;
   isPaused: boolean;
   progress: number;
