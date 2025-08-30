@@ -1,6 +1,6 @@
 [build]
   # Build command to create the static frontend
-  command = "./build.sh"
+  command = "npm ci && npx vite build && cp _redirects dist/public/"
   
   # Directory to publish (where the built frontend files will be)
   publish = "dist/public"
