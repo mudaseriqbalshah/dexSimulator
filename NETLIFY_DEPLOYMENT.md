@@ -2,6 +2,8 @@
 
 This DEX Price Simulator is configured for deployment on Netlify as a static single-page application.
 
+🚀 **Live Demo**: https://lucky-paletas-e24559.netlify.app/
+
 ## Quick Deploy to Netlify
 
 ### Option 1: Deploy from Git Repository
