@@ -17,6 +17,7 @@ export interface SimulationState {
   tradingMode: TradingMode;
   buyPercentage: number;
   sellPercentage: number;
+  transactionFeePercentage: number;
   isRunning: boolean;
   isPaused: boolean;
   progress: number;
@@ -27,6 +28,7 @@ export interface Transaction {
   type: 'BUY' | 'SELL';
   amount: number;
   price: number;
+  fee: number;
   timestamp: number;
 }
 

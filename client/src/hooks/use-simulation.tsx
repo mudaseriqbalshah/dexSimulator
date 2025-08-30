@@ -9,7 +9,7 @@ function getRandomNumber(min: number, max: number): number {
 
 export function useSimulation() {
   const [state, setState] = useState<SimulationState>({
-    coinTicker: 'TACOS',
+    coinTicker: 'TEST',
     initialUSD: 5000,
     initialTACOS: 15625000,
     USDTPool: 5000,
@@ -25,6 +25,7 @@ export function useSimulation() {
     tradingMode: 'BUY_ONLY',
     buyPercentage: 80,
     sellPercentage: 20,
+    transactionFeePercentage: 0.3,
     isRunning: false,
     isPaused: false,
     progress: 0,
@@ -50,9 +51,11 @@ export function useSimulation() {
 
   const buying = useCallback((i: number, currentState: SimulationState) => {
     const buyAmount = getRandomNumber(currentState.minTrade, currentState.maxTrade);
-    const totalTacos = buyAmount / currentState.price;
+    const fee = buyAmount * (currentState.transactionFeePercentage / 100);
+    const netBuyAmount = buyAmount - fee;
+    const totalTacos = netBuyAmount / currentState.price;
     
-    const newUSDTPool = currentState.USDTPool + buyAmount;
+    const newUSDTPool = currentState.USDTPool + netBuyAmount;
     const newTACOSPool = currentState.TACOSPool - totalTacos;
     const newPrice = newUSDTPool / newTACOSPool;
     const newTotalBuy = currentState.totalBuy + buyAmount;
@@ -62,6 +65,7 @@ export function useSimulation() {
       type: 'BUY',
       amount: buyAmount,
       price: newPrice,
+      fee: fee,
       timestamp: Date.now(),
     };
 
@@ -77,8 +81,10 @@ export function useSimulation() {
   const selling = useCallback((i: number, currentState: SimulationState) => {
     const sellAmount = getRandomNumber(currentState.minTrade, currentState.maxTrade);
     const totalUSDT = sellAmount * currentState.price;
+    const fee = totalUSDT * (currentState.transactionFeePercentage / 100);
+    const netUSDT = totalUSDT - fee;
     
-    const newUSDTPool = currentState.USDTPool - totalUSDT;
+    const newUSDTPool = currentState.USDTPool - netUSDT;
     const newTACOSPool = currentState.TACOSPool + sellAmount;
     const newPrice = newUSDTPool / newTACOSPool;
     const newTotalSell = currentState.totalSell + sellAmount;
@@ -88,6 +94,7 @@ export function useSimulation() {
       type: 'SELL',
       amount: sellAmount,
       price: newPrice,
+      fee: fee,
       timestamp: Date.now(),
     };
 

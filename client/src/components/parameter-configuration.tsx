@@ -176,6 +176,23 @@ export function ParameterConfiguration({
             </div>
           </div>
         )}
+
+        {/* Transaction Fee */}
+        <div>
+          <Label className="text-muted-foreground">Transaction Fee (%)</Label>
+          <Input
+            type="number"
+            min="0"
+            max="10"
+            step="0.1"
+            value={state.transactionFeePercentage}
+            onChange={(e) => handleInputChange('transactionFeePercentage', e.target.value)}
+            className="bg-input border-border text-foreground"
+            data-testid="input-transaction-fee"
+            disabled={state.isRunning}
+          />
+          <p className="text-xs text-muted-foreground mt-1">Fee applied to each transaction (e.g., 0.3%)</p>
+        </div>
         
         <div className="pt-4 space-y-3">
           <Button

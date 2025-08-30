@@ -54,6 +54,9 @@ export function TransactionLog({ transactions, coinTicker }: TransactionLogProps
                     <div className="text-xs text-muted-foreground">
                       @{formatPrice(transaction.price)}
                     </div>
+                    <div className="text-xs text-destructive">
+                      Fee: {transaction.fee.toFixed(4)} USDT
+                    </div>
                   </div>
                 </div>
               ))
