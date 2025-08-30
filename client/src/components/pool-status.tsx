@@ -40,7 +40,7 @@ export function PoolStatus({ state }: PoolStatusProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">TACOS Pool</p>
+              <p className="text-sm font-medium text-muted-foreground">{state.coinTicker} Pool</p>
               <p className="text-2xl font-bold text-foreground" data-testid="text-tacos-pool">
                 {formatNumber(state.TACOSPool)}
               </p>

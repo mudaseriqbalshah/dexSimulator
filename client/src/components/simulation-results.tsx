@@ -3,9 +3,10 @@ import { SimulationResults as SimulationResultsType } from '@/types/simulation';
 
 interface SimulationResultsProps {
   results: SimulationResultsType;
+  coinTicker: string;
 }
 
-export function SimulationResults({ results }: SimulationResultsProps) {
+export function SimulationResults({ results, coinTicker }: SimulationResultsProps) {
   const formatPrice = (price: number) => `$${price.toFixed(6)}`;
   const formatPercentage = (percent: number) => {
     const sign = percent >= 0 ? '+' : '';
@@ -52,7 +53,7 @@ export function SimulationResults({ results }: SimulationResultsProps) {
           <div className="flex justify-between items-center py-2">
             <span className="text-sm text-muted-foreground">Total Sell Volume</span>
             <span className="font-mono text-sm text-foreground" data-testid="text-total-sell-volume">
-              {results.totalSellVolume.toLocaleString()} TACOS
+              {results.totalSellVolume.toLocaleString()} {coinTicker}
             </span>
           </div>
         </div>

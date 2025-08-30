@@ -52,7 +52,7 @@ export default function Home() {
             />
           </div>
           <div className="lg:col-span-2">
-            <PriceChart priceHistory={priceHistory} currentPrice={state.price} />
+            <PriceChart priceHistory={priceHistory} currentPrice={state.price} coinTicker={state.coinTicker} />
           </div>
         </div>
 
@@ -61,8 +61,8 @@ export default function Home() {
 
         {/* Simulation Results and Transaction Log */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <SimulationResults results={results} />
-          <TransactionLog transactions={transactions} />
+          <SimulationResults results={results} coinTicker={state.coinTicker} />
+          <TransactionLog transactions={transactions} coinTicker={state.coinTicker} />
         </div>
       </main>
     </div>

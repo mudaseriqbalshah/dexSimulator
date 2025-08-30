@@ -9,6 +9,7 @@ function getRandomNumber(min: number, max: number): number {
 
 export function useSimulation() {
   const [state, setState] = useState<SimulationState>({
+    coinTicker: 'TACOS',
     initialUSD: 5000,
     initialTACOS: 15625000,
     USDTPool: 5000,

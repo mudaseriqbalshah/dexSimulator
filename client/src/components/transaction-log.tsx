@@ -4,9 +4,10 @@ import { Transaction } from '@/types/simulation';
 
 interface TransactionLogProps {
   transactions: Transaction[];
+  coinTicker: string;
 }
 
-export function TransactionLog({ transactions }: TransactionLogProps) {
+export function TransactionLog({ transactions, coinTicker }: TransactionLogProps) {
   const formatPrice = (price: number) => `$${price.toFixed(6)}`;
 
   return (
@@ -48,7 +49,7 @@ export function TransactionLog({ transactions }: TransactionLogProps) {
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-mono text-foreground">
-                      {transaction.amount.toFixed(2)} {transaction.type === 'BUY' ? 'USDT' : 'TACOS'}
+                      {transaction.amount.toFixed(2)} {transaction.type === 'BUY' ? 'USDT' : coinTicker}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       @{formatPrice(transaction.price)}

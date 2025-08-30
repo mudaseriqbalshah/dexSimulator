@@ -21,9 +21,13 @@ export function ParameterConfiguration({
   onReset,
 }: ParameterConfigurationProps) {
   const handleInputChange = (field: keyof SimulationState, value: string) => {
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      onUpdateParameters({ [field]: numValue });
+    if (field === 'coinTicker') {
+      onUpdateParameters({ [field]: value.toUpperCase() });
+    } else {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        onUpdateParameters({ [field]: numValue });
+      }
     }
   };
 
@@ -45,7 +49,22 @@ export function ParameterConfiguration({
               ${state.initialPrice.toFixed(6)}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">TACOS/USDT starting price</p>
+          <p className="text-xs text-muted-foreground mt-1">{state.coinTicker}/USDT starting price</p>
+        </div>
+
+        {/* Coin Ticker Input */}
+        <div>
+          <Label className="text-muted-foreground">Coin Ticker</Label>
+          <Input
+            type="text"
+            value={state.coinTicker}
+            onChange={(e) => handleInputChange('coinTicker', e.target.value)}
+            className="bg-input border-border text-foreground"
+            data-testid="input-coin-ticker"
+            disabled={state.isRunning}
+            placeholder="Enter coin symbol (e.g., BTC, ETH)"
+            maxLength={10}
+          />
         </div>
 
         <div>
@@ -61,7 +80,7 @@ export function ParameterConfiguration({
         </div>
         
         <div>
-          <Label className="text-muted-foreground">Initial TACOS Pool</Label>
+          <Label className="text-muted-foreground">Initial {state.coinTicker} Pool</Label>
           <Input
             type="number"
             value={state.initialTACOS}

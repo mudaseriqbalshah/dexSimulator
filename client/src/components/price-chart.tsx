@@ -5,9 +5,10 @@ import { PriceDataPoint } from '@/types/simulation';
 interface PriceChartProps {
   priceHistory: PriceDataPoint[];
   currentPrice: number;
+  coinTicker: string;
 }
 
-export function PriceChart({ priceHistory, currentPrice }: PriceChartProps) {
+export function PriceChart({ priceHistory, currentPrice, coinTicker }: PriceChartProps) {
   const formatPrice = (price: number) => `$${price.toFixed(6)}`;
   
   const chartData = priceHistory.map(point => ({
@@ -19,7 +20,7 @@ export function PriceChart({ priceHistory, currentPrice }: PriceChartProps) {
     <Card className="bg-card border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-foreground">TACOS/USDT Price Chart</CardTitle>
+          <CardTitle className="text-foreground">{coinTicker}/USDT Price Chart</CardTitle>
           <div className="flex items-center space-x-4 text-sm">
             <span className="text-muted-foreground">Current Price:</span>
             <span className="text-success font-mono font-semibold" data-testid="text-current-price">

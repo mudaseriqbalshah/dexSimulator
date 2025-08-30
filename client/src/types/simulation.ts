@@ -1,6 +1,7 @@
 export type TradingMode = 'BUY_ONLY' | 'SELL_ONLY' | 'MIXED';
 
 export interface SimulationState {
+  coinTicker: string;
   initialUSD: number;
   initialTACOS: number;
   USDTPool: number;
